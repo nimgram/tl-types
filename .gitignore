@@ -3,3 +3,5 @@ tests/test
 nimcache/
 nimblecache/
 htmldocs/
+src/tltypes/private/tl.nim      
+rpc

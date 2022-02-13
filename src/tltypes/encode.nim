@@ -49,12 +49,17 @@ proc TLEncode*(data: seq[uint8]): seq[uint8] =
         while len(result) mod 4 != 0:
             result.add(uint8(0))
 
-template TLEncode*(data: string): seq[uint8] =
-    TLEncode(cast[seq[uint8]](data))
+
 
 proc TLEncodeVector*[T](x: seq[T]): seq[uint8] =
     ## Serialize vector
 
     result.add(TLEncode(int32(VECTOR_CID)) & TLEncode(int32(len(x))))
     for obj in x:
-        result = result & TLEncode(obj)
+        when T.typeof is seq and T.typeof is not seq[uint8]:
+            result = result & TLEncodeVector(obj)
+        else:
+            result = result & TLEncode(obj)
+
+template TLEncode*(data: string): seq[uint8] =
+    TLEncode(cast[seq[uint8]](data))
