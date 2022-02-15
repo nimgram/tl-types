@@ -39,15 +39,15 @@ include static
 const LAYER_VERSION* = """
 
 proc generateNimCode*(file: File, tl: seq[TLConstructor],
-        config: TLWriterConfig, layer: int) =
+        config: TLWriterConfig, layer: int, log: bool = false) =
     file.write(PREFIX_CODE, $layer)
 
-    if config.enableTypes: generateConstructors(file, tl, Types)
+    if config.enableTypes: generateConstructors(file, tl, Types, log)
     if config.enableFunctions: generateConstructors(file, tl, Functions)
     if config.generateSetConstructorID and config.enableTypes and
-            config.enableFunctions: generateSetConstructorID(file, tl)
+            config.enableFunctions: generateSetConstructorID(file, tl, log)
     if config.generateNameByConstructorID and config.enableTypes and
-            config.enableFunctions: generateNameByConstructorID(file, tl)
-    if config.generateEncode: generateEncode(file, tl)
+            config.enableFunctions: generateNameByConstructorID(file, tl, log)
+    if config.generateEncode: generateEncode(file, tl, log)
     if config.generateDecode and config.enableTypes and
-            config.enableFunctions: generateDecode(file, tl)
+            config.enableFunctions: generateDecode(file, tl, log)

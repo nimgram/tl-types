@@ -11,12 +11,14 @@
 # SOFTWARE.
 
 import tlparser, strutils, strformat, utils
-import options
+import options, terminal
 proc generateConstructors*(file: File, constructors: seq[TLConstructor],
-        category: TLSection) =
+        category: TLSection, log: bool = false) =
     file.write("\n\ntype")
     var bareTypesNames = newSeq[string]()
-
+    if log: stdout.styledWriteLine(fgCyan, styleBright, "      Info:",
+      fgDefault,
+      resetStyle, " Generating ", $category)
     for constructor in constructors:
         if constructor.section != category:
             continue
@@ -62,7 +64,8 @@ proc generateConstructors*(file: File, constructors: seq[TLConstructor],
                         parameterType = &"{name}[{parameterType}]"
                         genericArgument = if genericArgument.get().genericArgument.isSome(): genericArgument.get().genericArgument else: none(TLType)
 
-                    if specifiedType.flag.isSome() and specifiedType.type.name.toLower != "true":
+                    if specifiedType.flag.isSome() and
+                            specifiedType.type.name.toLower != "true":
                         parameterType = &"Option[{parameterType}]"
 
             elif parameter.parameterType.get() of TLParameterTypeFlag:

@@ -12,6 +12,7 @@
 
 import strutils, sequtils
 import tlparser, writer/gen
+import terminal
 
 const LAYER_DEFINITION = "LAYER"
 
@@ -24,24 +25,40 @@ proc findLayerVersion(tldata: string): int =
         return parseInt(line[index+LAYER_DEFINITION.len..line.high].strip())
   raise newException(FieldDefect, "Unable to find layer version")
 
-echo "Reading constructors for mtproto.tl..."
+proc main* =
 
-let mtprotoTL = parseNew(readFile("tl/mtproto.tl")).all().toSeq()
+  stdout.styledWriteLine(fgCyan, styleBright, "   Building", fgDefault,
+      resetStyle, " constructors")
 
-echo "Reading constructors for api.tl..."
+  stdout.styledWriteLine(fgCyan, styleBright, "      Info:", fgDefault,
+      resetStyle, " Reading constructors of mtproto.tl")
 
-let apiData = readFile("tl/api.tl")
+  let mtprotoTL = parseNew(readFile("tl/mtproto.tl")).all().toSeq()
 
-var constructors = mtprotoTL & parseNew(apiData).all().toSeq()
+  stdout.styledWriteLine(fgCyan, styleBright, "      Info:", fgDefault,
+      resetStyle, " Reading constructors of api.tl")
 
-echo "Opening src/tltypes/private/tl.nim..."
+  let apiData = readFile("tl/api.tl")
 
-let file = open("src/tltypes/private/tl.nim", fmWrite)
+  stdout.styledWriteLine(fgCyan, styleBright, "      Info:", fgDefault,
+      resetStyle, " Finding layer version of the schema")
 
-echo "Calling code generation..."
+  let layerVersion = findLayerVersion(apiData)
 
-generateNimCode(file, constructors, TLWriterConfig(enableTypes: true,
-    enableFunctions: true, generateSetConstructorID: true,
-    generateEncode: true, generateDecode: true,
-    generateNameByConstructorID: true), findLayerVersion(apiData))
+  var constructors = mtprotoTL & parseNew(apiData).all().toSeq()
 
+  stdout.styledWriteLine(fgCyan, styleBright, "      Info:", fgDefault,
+      resetStyle, " Trying to open tl.nim")
+
+  let file = open("src/tltypes/private/tl.nim", fmWrite)
+
+  stdout.styledWriteLine(fgCyan, styleBright, "      Info:", fgDefault,
+      resetStyle, " Initializing code generation")
+
+  generateNimCode(file, constructors, TLWriterConfig(enableTypes: true,
+      enableFunctions: true, generateSetConstructorID: true,
+      generateEncode: true, generateDecode: true,
+      generateNameByConstructorID: true), layerVersion, true)
+
+when isMainModule:
+  main()

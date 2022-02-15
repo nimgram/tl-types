@@ -10,12 +10,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import tlparser, strutils, strformat, utils
+import tlparser, strutils, strformat, utils, terminal
 
 
-proc generateSetConstructorID*(file: File, constructors: seq[TLConstructor]) =
+proc generateSetConstructorID*(file: File, constructors: seq[TLConstructor],
+        log: bool = false) =
     if constructors.len <= 0:
         return
+    if log: stdout.styledWriteLine(fgCyan, styleBright, "      Info:",
+      fgDefault,
+      resetStyle, " Generating SetConstructorID")
     file.write("\n\nproc setConstructorID*[T: TL](obj: T): T =")
 
     var prefixOperator = "when"

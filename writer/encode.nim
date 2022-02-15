@@ -10,14 +10,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import tlparser, strutils, options, strformat, utils
+import tlparser, strutils, options, strformat, utils, terminal
 
-proc generateEncode*(file: File, constructors: seq[TLConstructor]) =
+proc generateEncode*(file: File, constructors: seq[TLConstructor],
+        log: bool = false) =
     if constructors.len <= 0:
         return
     file.write("\n\nproc TLEncode*(obj: TL): seq[uint8] =")
     file.write("\n    case obj.constructorID:")
-
+    if log: stdout.styledWriteLine(fgCyan, styleBright, "      Info:",
+      fgDefault,
+      resetStyle, " Generating TLEncode")
     for constructor in constructors:
         let objcCode = if constructor.parameters.len >
                 0: &"\n        let objc = obj.{generateStylizedName(constructor.name, constructor.namespaces)}" else: ""

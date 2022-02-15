@@ -10,13 +10,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import tlparser, strformat, utils
+import tlparser, strformat, utils, terminal
 
 
 proc generateNameByConstructorID*(file: File, constructors: seq[
-        TLConstructor]) =
+        TLConstructor], log: bool = false) =
     if constructors.len <= 0:
         return
+    if log: stdout.styledWriteLine(fgCyan, styleBright, "      Info:",
+      fgDefault,
+      resetStyle, " Generating NameByConstructorID")
     file.write("\n\nproc nameByConstructorID*(obj: TL): string =")
     file.write("\n    case obj.constructorID:")
     for constructor in constructors:
