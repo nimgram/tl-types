@@ -10,8 +10,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import tlparser, strutils, sugar, strformat, utils
-import options, json
+import tlparser, strutils, strformat, utils
+import options
 proc generateConstructors*(file: File, constructors: seq[TLConstructor],
         category: TLSection) =
     file.write("\n\ntype")
@@ -62,7 +62,7 @@ proc generateConstructors*(file: File, constructors: seq[TLConstructor],
                         parameterType = &"{name}[{parameterType}]"
                         genericArgument = if genericArgument.get().genericArgument.isSome(): genericArgument.get().genericArgument else: none(TLType)
 
-                    if specifiedType.flag.isSome():
+                    if specifiedType.flag.isSome() and specifiedType.type.name.toLower != "true":
                         parameterType = &"Option[{parameterType}]"
 
             elif parameter.parameterType.get() of TLParameterTypeFlag:

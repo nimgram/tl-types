@@ -42,5 +42,6 @@ echo "Calling code generation..."
 
 generateNimCode(file, constructors, TLWriterConfig(enableTypes: true,
     enableFunctions: true, generateSetConstructorID: true,
-    generateEncode: true), findLayerVersion(apiData))
+    generateEncode: true, generateDecode: true,
+    generateNameByConstructorID: true), findLayerVersion(apiData))
 

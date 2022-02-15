@@ -10,9 +10,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# proc setConstructorID*[T: TL](obj: T) =
-
-import tlparser, strutils, sugar, strformat, utils
+import tlparser, strutils, strformat, utils
 
 
 proc generateSetConstructorID*(file: File, constructors: seq[TLConstructor]) =
@@ -33,7 +31,9 @@ proc generateSetConstructorID*(file: File, constructors: seq[TLConstructor]) =
     elif T is TLFalse:
         obj.constructorID = uint32(0xbc799737)
     elif T is GZipContent:
-        obj.constructorID = uint32(0x3072cfa1)""")
+        obj.constructorID = uint32(0x3072cfa1)
+    elif T is MessageContainer:
+        obj.constructorID = uint32(0x73f1f8dc)""")
 
 
     file.write(&"\n    else:\n        raise newException(CatchableError, \"Unable to find the corresponding id for this type, please check it is not a generic one.\")")

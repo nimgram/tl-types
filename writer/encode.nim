@@ -27,10 +27,13 @@ proc generateEncode*(file: File, constructors: seq[TLConstructor]) =
             if parameter.parameterType.get() of TLParameterTypeSpecified:
                 if parameter.parameterType.get().TLParameterTypeSpecified.flag.isSome():
                     let a = parameter.parameterType.get.TLParameterTypeSpecified.flag.get
-                    file.write(&"\n        if objc.{parameter.name}.isSome(): objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
+                    if parameter.parameterType.get().TLParameterTypeSpecified.type.name.toLower != "true":
+                        file.write(&"\n        if objc.{parameter.name}.isSome(): objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
+                    else:
+                        file.write(&"\n        if objc.{parameter.name}: objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
 
         for parameter in constructor.parameters:
-            if parameter.aanytype: continue
+            if parameter.anytype: continue
             var encodeCode = ""
             var encodeType = ""
             if parameter.parameterType.get() of TLParameterTypeSpecified:
@@ -55,6 +58,9 @@ proc generateEncode*(file: File, constructors: seq[TLConstructor]) =
                             "true": encodeCode = &"if objc.{parameter.name}.isSome(): {encodeCode}" else: encodeCode = ""
             elif parameter.parameterType.get() of TLParameterTypeFlag:
                 file.write(&"\n        result.add(TLEncode(objc.{parameter.name}))")
+            else:
+                echo "WARNING: Found unknown type, skipping."
+                continue
             if encodeCode == "": continue
             file.write(&"\n        {encodeCode}")
 
