@@ -33,12 +33,12 @@ proc TLDecode*[T: int32|uint32|int64|uint64|float32|float64|UInt128|UInt256|bool
 
     if len[0] <= 253:
       result = self.readBytes(uint(len[0]))
-      paddingLen = int32(len[0])
+      paddingLen = int32(len[0]+1)
     else:
       paddingLen = TLDecode[int32](newTLStream(self.readBytes(3) & 0))
       result = self.readBytes(uint(paddingLen))
-
-    while int64(paddingLen+1) mod int64(4) != int64(0):
+      paddingLen = paddingLen+4
+    while int64(paddingLen) mod int64(4) != int64(0):
       inc paddingLen
       doAssert self.readBytes(1)[0] == uint8(0), "Unexpected end of padding bytes"
   else:
