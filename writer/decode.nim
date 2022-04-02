@@ -44,7 +44,8 @@ proc generateDecode*(file: File, constructors: seq[TLConstructor],
                 if typeConverted.type.genericArgument.isSome() and codeType != "":
                     if typeConverted.type.genericArgument.get().name.toLower() == "vector":
                         if (typeConverted.type.bare or
-                                typeConverted.type.name.toLower == "bool" or
+                                typeConverted.type.name.toLower in ["bool",
+                                        "object"] or
                                 typeConverted.type.genericReference) and
                                         typeConverted.type.name.toLower != "future_salt":
                             decodeCode = &"TLDecodeVector{codeType}"
@@ -58,7 +59,8 @@ proc generateDecode*(file: File, constructors: seq[TLConstructor],
                 else:
                     if (typeConverted.type.bare or
                             typeConverted.type.genericReference or
-                            typeConverted.type.name.toLower == "bool") and
+                            typeConverted.type.name.toLower in ["bool",
+                                    "object"]) and
                             typeConverted.type.name.toLower != "future_salt":
                         decodeCode = &"TLDecode{codeType}"
                     else:

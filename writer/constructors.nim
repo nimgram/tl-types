@@ -46,14 +46,17 @@ proc generateConstructors*(file: File, constructors: seq[TLConstructor],
                     parameterType = "TL"
                 else:
                     if not specifiedType.type.bare:
-                        parameterType = generateStylizedName(
+                        if specifiedType.type.name == "Object":
+                            parameterType = "TL"
+                        else:
+                            parameterType = generateStylizedName(
                                 specifiedType.type.name,
                                 specifiedType.type.namespaces)
                     else:
                         parameterType = generateFixedType(
                                 specifiedType.type.name)
                     if not specifiedType.type.bare and
-                            specifiedType.type.name != "Bool":
+                            not(specifiedType.type.name in ["Bool", "Object"]):
                         parameterType = &"{parameterType}I"
 
                     var genericArgument = specifiedType.type.genericArgument
