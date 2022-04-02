@@ -51,7 +51,7 @@ proc TLEncode*(self: CoreMessage): seq[uint8] =
     result.add(TLEncode(uint32(len(body))))
     result.add(body)
 
-proc TLDecodeCoreMessage(stream: TLStream): CoreMessage =
+proc TLDecodeCoreMessage*(stream: TLStream): CoreMessage =
     result = new CoreMessage
     result.msgID = TLDecode[uint64](stream)
     result.seqNo = TLDecode[uint32](stream)
