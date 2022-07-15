@@ -30,7 +30,7 @@ type
     CoreMessage* = ref object
         msgID*: uint64
         seqNo*: uint32
-        lenght: uint32
+        length: uint32
         body*: TL
 
     MessageContainer* = ref object of TLObject
@@ -55,8 +55,8 @@ proc TLDecodeCoreMessage*(stream: TLStream): CoreMessage =
     result = new CoreMessage
     result.msgID = TLDecode[uint64](stream)
     result.seqNo = TLDecode[uint32](stream)
-    result.lenght = TLDecode[uint32](stream)
-    result.body = TLDecode(newTLStream(stream.readBytes(result.lenght)))
+    result.length = TLDecode[uint32](stream)
+    result.body = TLDecode(newTLStream(stream.readBytes(result.length)))
 
 
 proc seqNo*(isRelated: bool, currentInt: int): int =
