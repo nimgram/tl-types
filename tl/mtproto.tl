@@ -65,8 +65,9 @@ rpc_answer_unknown#5e2ad36e = RpcDropAnswer;
 rpc_answer_dropped_running#cd78e586 = RpcDropAnswer;
 rpc_answer_dropped#a43ad8b7 msg_id:long seq_no:int bytes:int = RpcDropAnswer;
 
-future_salt#0949d9dc valid_since:int valid_until:int salt:long = FutureSalt;
-future_salts#ae500895 req_msg_id:long now:int salts:vector<future_salt> = FutureSalts;
+/// Parsed manually
+//future_salt#0949d9dc valid_since:int valid_until:int salt:long = FutureSalt;
+//future_salts#ae500895 req_msg_id:long now:int salts:vector<future_salt> = FutureSalts;
 
 pong#347773c5 msg_id:long ping_id:long = Pong;
 
@@ -75,6 +76,7 @@ destroy_session_none#62d350c9 session_id:long = DestroySessionRes;
 
 new_session_created#9ec20908 first_msg_id:long unique_id:long server_salt:long = NewSession;
 
+/// Parsed manually
 //message msg_id:long seqno:int bytes:int body:Object = Message; // parsed manually
 //msg_container#73f1f8dc messages:vector<message> = MessageContainer; // parsed manually
 //msg_copy#e06046b2 orig_message:Message = MessageCopy; // parsed manually, not used - use msg_container
@@ -82,6 +84,7 @@ new_session_created#9ec20908 first_msg_id:long unique_id:long server_salt:long =
 
 http_wait#9299359f max_delay:int wait_after:int max_wait:int = HttpWait;
 
+// Unused
 //ipPort ipv4:int port:int = IpPort;
 //help.configSimple#d997c3c5 date:int expires:int dc_id:int ip_port_list:Vector<ipPort> = help.ConfigSimple;
 
@@ -90,6 +93,7 @@ ipPortSecret#37982646 ipv4:int port:int secret:bytes = IpPort;
 accessPointRule#4679b65f phone_prefix_rules:string dc_id:int ips:vector<IpPort> = AccessPointRule;
 help.configSimple#5a592a6c date:int expires:int rules:vector<AccessPointRule> = help.ConfigSimple;
 
+// Unused
 //tlsClientHello blocks:vector<TlsBlock> = TlsClientHello;
 
 //tlsBlockString data:string = TlsBlock;

@@ -37,7 +37,11 @@ proc generateSetConstructorID*(file: File, constructors: seq[TLConstructor],
     elif T is GZipContent:
         obj.constructorID = uint32(0x3072cfa1)
     elif T is MessageContainer:
-        obj.constructorID = uint32(0x73f1f8dc)""")
+        obj.constructorID = uint32(0x73f1f8dc)
+    elif T is FutureSalt:
+        obj.constructorID = uint32(0x0949d9dc)
+    elif T is FutureSalts:
+        obj.constructorID = uint32(0xae500895)""")
 
 
     file.write(&"\n    else:\n        raise newException(CatchableError, \"Unable to find the corresponding id for this type, please check it is not a generic one.\")")

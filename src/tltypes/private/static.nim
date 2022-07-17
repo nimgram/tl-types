@@ -27,6 +27,16 @@ type
     GZipContent* = ref object of TLObject
         value*: TL
 
+    FutureSalt* = ref object of TLObject
+        validSince*: uint32
+        validUntil*: uint32
+        salt*: uint64
+
+    FutureSalts* = ref object of TLObject
+        reqMsgID*: uint64
+        now*: uint64
+        salts*: seq[FutureSalt]
+
     CoreMessage* = ref object
         msgID*: uint64
         seqNo*: uint32
