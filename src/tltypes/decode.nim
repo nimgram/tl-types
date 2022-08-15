@@ -13,8 +13,8 @@
 
 import private/stream
 export stream
-import endians
-import stint
+import std/endians
+import pkg/stint
 
 proc TLDecode*[T: int32|uint32|int64|uint64|float32|float64|UInt128|UInt256|bool|seq[
     uint8]|string](self: TLStream): T =
@@ -49,7 +49,7 @@ proc TLDecode*[T: int32|uint32|int64|uint64|float32|float64|UInt128|UInt256|bool
       elif sizeof(T) == 8:
         swapEndian64(addr result, addr buf[0])
       elif sizeof(T) == 16 or sizeof(T) == 32:
-        result = fromBytes(T, buf, bigEndian)
+        result = fromBytes(T, buf, MTPROTO_ENDIAN)
     else:
       copyMem(addr result, addr buf[0], sizeof(T))
 

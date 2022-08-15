@@ -10,7 +10,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import endians
+import std/endians
 import stint
 import private/stream
 
@@ -29,6 +29,7 @@ proc TLEncode*(integer: int32|uint32|int64|uint64|float32|float64|UInt128|UInt25
             var res: array[0..sizeof(integer)-1, uint8]
             swapEndian64(addr res, unsafeAddr integer)
             result = res[0..sizeof(integer)-1]
+
     else:
         return cast[array[0..sizeof(integer)-1, uint8]](integer)[0..sizeof(integer)-1]
 
