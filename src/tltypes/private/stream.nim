@@ -18,24 +18,21 @@ const FALSE_CID* = uint32(0xbc799737)
 type TLStream* = ref object
     ## A stream of bytes
     stream: seq[uint8] ## Sequence of bytes
-    index: uint        ## Current index
 
 proc newTLStream*(data: seq[uint8]): TLStream =
     ## Create a new TLStream
-    return TLStream(index: 0, stream: data)
+    return TLStream(stream: data)
 
 proc readBytes*(self: TLStream, n: uint): seq[uint8] =
     ## Read a specified lenght of bytes
-    result = self.stream[self.index..self.index+n-1]
-    self.index = self.index+n
+    result = self.stream[0..n-1]
+    self.stream = self.stream[n..self.stream.high]
 
 proc len*(self: TLStream): int =
     return self.stream.len
 
 proc readAll*(self: TLStream): seq[uint8] =
     ## Read everything remaining
-    result = self.stream[self.index..self.stream.high]
-    self.index = uint(self.stream.high)
+    result = self.stream
+    self.stream.setLen(0)
 
-proc goBack*(self: TLStream, offset: uint = 1) =
-    self.index -= offset
