@@ -14,7 +14,11 @@ requires "stint"
 requires "zippy >= 0.9.7"
 requires "https://github.com/nimgram/tl-parser"
 
+proc gen = 
+    selfExec("r --hints:off builder.nim")
+
+task gen, "generate tl code file":
+    gen()
 
 before install:    
-    
-    selfExec("r --hints:off builder.nim")
+   gen()

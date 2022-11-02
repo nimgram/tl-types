@@ -43,12 +43,11 @@ proc TLEncode*(data: seq[uint8]): seq[uint8] =
 
     if len(data) <= 253:
         result.add(uint8(len(data)) & data)
-        while len(result) mod 4 != 0:
-            result.add(uint8(0))
     else:
         result.add(uint8(254) & TLEncode(int32(len(data)))[0..2] & data)
-        while len(result) mod 4 != 0:
-            result.add(uint8(0))
+
+    while len(result) mod 4 != 0:
+        result.add(uint8(0))
 
 
 
