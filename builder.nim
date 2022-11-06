@@ -58,7 +58,7 @@ proc main* =
   generateNimCode(file, constructors, TLWriterConfig(enableTypes: true,
       enableFunctions: true, generateSetConstructorID: true,
       generateEncode: true, generateDecode: true,
-      generateNameByConstructorID: true), layerVersion, true)
+      generateNameByConstructorID: true, generateJson: true), layerVersion, true)
 
 when isMainModule:
   main()

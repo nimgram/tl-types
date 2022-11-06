@@ -109,18 +109,18 @@ proc generateDecode*(file: File, constructors: seq[TLConstructor],
         result.RPCResult.result = TLDecode(stream)
     of uint32(0x1cb5c415):
         let length = TLDecode[int32](stream)
-        let buffer = stream.readBytes(uint(length))
+        let buffer = stream.readAll()
         var stream = newTLStream(buffer)
         let elementsLength = len(buffer) / length
         result = TLVector(constructorID: 0x1cb5c415)
         if elementsLength == 4:
-            for _ in 1..length:
+            for _ in 0..<length:
                 result.TLVector.elements.add(TLInt(constructorID: 4, value: TLDecode[uint32](stream)))
         elif elementsLength == 8:
-            for _ in 1..length:
+            for _ in 0..<length:
                 result.TLVector.elements.add(TLLong(constructorID: 8, value: TLDecode[uint64](stream)))
         else: 
-            for _ in 1..length:
+            for _ in 0..<length:
                 result.TLVector.elements.add(TLDecode(stream))""")
 
     file.write(&"\n    else:\n        raise newException(CatchableError, \"Unable to find the corresponding type for this constructor id.\")")

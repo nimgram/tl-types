@@ -6,3 +6,4 @@ htmldocs/
 src/tltypes/private/tl.nim      
 rpc
 builder
+.devcontainer

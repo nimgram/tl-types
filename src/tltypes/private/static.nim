@@ -10,7 +10,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import stint, options, ../encode, ../decode, zippy
+import pkg/stint, std/options, ../encode, ../decode, pkg/zippy, std/json
 
 type
     TL* = ref object of RootObj
@@ -97,3 +97,10 @@ proc TLDecodeVector*(
         doAssert TLDecode[uint32](self) == VECTOR_CID, "Type is not a Vector"
     for _ in 1..TLDecode[int32](self):
         result.add(TLDecode(self))
+
+proc `%*`*(obj: TL): JsonNode
+
+proc `%*`*(arr: seq[TL]): JsonNode =
+    result = newJArray()
+    for obj in arr:
+        result.add(tl.`%*`obj)

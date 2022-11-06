@@ -11,7 +11,7 @@
 # SOFTWARE.
 
 import tlparser
-import constructors, setid, encode, decode, namebyid
+import constructors, setid, encode, decode, namebyid, json
 
 type TLWriterConfig* = object
     enableTypes*: bool
@@ -20,6 +20,7 @@ type TLWriterConfig* = object
     generateNameByConstructorID*: bool
     generateEncode*: bool
     generateDecode*: bool
+    generateJson*: bool
 
 const PREFIX_CODE = """# Nimgram
 # Copyright (C) 2020-2022 Daniele Cortesi <https://github.com/dadadani>
@@ -51,3 +52,4 @@ proc generateNimCode*(file: File, tl: seq[TLConstructor],
     if config.generateEncode: generateEncode(file, tl, log)
     if config.generateDecode and config.enableTypes and
             config.enableFunctions: generateDecode(file, tl, log)
+    if config.generateJson: generateJson(file, tl, log  )
