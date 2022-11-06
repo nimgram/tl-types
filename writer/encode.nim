@@ -93,6 +93,16 @@ proc generateEncode*(file: File, constructors: seq[TLConstructor],
         for salt in obj.FutureSalts.salts:
             result.add(TLEncode(salt.validSince))
             result.add(TLEncode(salt.validUntil))
-            result.add(TLEncode(salt.salt))""")
+            result.add(TLEncode(salt.salt))
+    of uint32(0xf35c6d01):
+        result = TLEncode(uint32(0xf35c6d01))
+        result.add(TLEncode(obj.RPCResult.reqMsgID))
+        result.add(TLEncode(obj.RPCResult.result))
+    of uint32(0x1cb5c415):
+        result = TLEncodeVector(obj.TLVector.elements)
+    of uint32(4):
+        result = TLEncode(obj.TLInt.value)
+    of uint32(8):
+        result = TLEncode(obj.TLLong.value)""")
 
     file.write(&"\n    else:\n        raise newException(CatchableError, \"Unable to find the corresponding id for this type, please check it is not a generic one and that you have called setConstructorID.\")")

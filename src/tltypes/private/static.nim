@@ -23,6 +23,15 @@ type
 
     TLTrue* = ref object of TLObject
     TLFalse* = ref object of TLObject
+    
+    TLVector* = ref object of TLObject
+        elements*: seq[TL]
+
+    TLLong* = ref object of TLObject
+        value*: uint64
+
+    TLInt* = ref object of TLObject
+        value*: uint32
 
     GZipContent* = ref object of TLObject
         value*: TL
@@ -42,6 +51,10 @@ type
         seqNo*: uint32
         length: uint32
         body*: TL
+    
+    RPCResult* = ref object of TLObject
+        reqMsgID*: uint64
+        result*: TL
 
     MessageContainer* = ref object of TLObject
         messages*: seq[CoreMessage]
@@ -82,5 +95,5 @@ proc TLDecodeVector*(
 
     if enableIdDecode:
         doAssert TLDecode[uint32](self) == VECTOR_CID, "Type is not a Vector"
-    for _ in countup(1, TLDecode[int32](self)):
+    for _ in 1..TLDecode[int32](self):
         result.add(TLDecode(self))

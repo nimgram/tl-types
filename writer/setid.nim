@@ -41,7 +41,15 @@ proc generateSetConstructorID*(file: File, constructors: seq[TLConstructor],
     elif T is FutureSalt:
         obj.constructorID = uint32(0x0949d9dc)
     elif T is FutureSalts:
-        obj.constructorID = uint32(0xae500895)""")
+        obj.constructorID = uint32(0xae500895)
+    elif T is RPCResult:
+        obj.constructorID = uint32(0xf35c6d01)
+    elif T is TLVector:
+        obj.constructorID = uint32(0x1cb5c415)
+    elif T is TLInt:
+        obj.constructorID = uint32(4)
+    elif T is TLLong:
+        obj.constructorID = uint32(8)""")
 
 
     file.write(&"\n    else:\n        raise newException(CatchableError, \"Unable to find the corresponding id for this type, please check it is not a generic one.\")")

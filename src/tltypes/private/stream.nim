@@ -24,7 +24,7 @@ proc newTLStream*(data: seq[uint8]): TLStream =
     return TLStream(stream: data)
 
 proc readBytes*(self: TLStream, n: uint): seq[uint8] =
-    ## Read a specified lenght of bytes
+    ## Read a specified length of bytes
     result = self.stream[0..n-1]
     self.stream = self.stream[n..self.stream.high]
 

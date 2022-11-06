@@ -32,6 +32,10 @@ proc generateNameByConstructorID*(file: File, constructors: seq[
     of uint32(0x3072cfa1): return "GZipContent"
     of uint32(0x73F1F8DC): return "MessageContainer"
     of uint32(0x0949d9dc): return "FutureSalt"
-    of uint32(0xae500895): return "FutureSalts"""")
+    of uint32(0xae500895): return "FutureSalts"
+    of uint32(0xf35c6d01): return "RPCResult"
+    of uint32(0x1cb5c415): return "TLVector"
+    of uint32(4): return "TLInt"
+    of uint32(8): return "TLLong"""")
 
     file.write(&"\n    else:\n        raise newException(CatchableError, \"Unable to find the corresponding type for this constructor id.\")")

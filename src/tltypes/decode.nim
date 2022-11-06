@@ -63,5 +63,5 @@ proc TLDecodeVector*[T](
 
   if enableIdDecode:
     doAssert TLDecode[uint32](self) == VECTOR_CID, "Type is not a Vector"
-  for _ in countup(1, TLDecode[int32](self)):
+  for _ in 1..TLDecode[int32](self):
     result.add(TLDecode[T](self))
