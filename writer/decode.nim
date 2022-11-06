@@ -87,7 +87,7 @@ proc generateDecode*(file: File, constructors: seq[TLConstructor],
     of uint32(0x3072cfa1): return GZipContent(constructorID: 0x3072cfa1, value: TLDecode(newTLStream(uncompress(TLDecode[seq[uint8]](stream)))))
     of uint32(0x73F1F8DC): 
         result = MessageContainer(constructorID: uint32(0x73F1F8DC))
-        for _ in countup(1, TLDecode[int32](stream)): result.MessageContainer.messages.add(TLDecodeCoreMessage(stream))
+        for _ in 0..<TLDecode[int32](stream): result.MessageContainer.messages.add(TLDecodeCoreMessage(stream))
     of uint32(0x0949d9dc):
         result = FutureSalt(constructorID: uint32(0x0949d9dc))
         result.FutureSalt.validSince = TLDecode[uint32](stream)
@@ -97,7 +97,7 @@ proc generateDecode*(file: File, constructors: seq[TLConstructor],
         result = FutureSalts(salts: newSeq[Future_salt](), constructorID: uint32(0xae500895))
         result.FutureSalts.reqMsgID = TLDecode[uint64](stream)
         result.FutureSalts.now = TLDecode[uint32](stream)
-        for _ in countup(1, TLDecode[int32](stream)): 
+        for _ in 0..<TLDecode[int32](stream): 
             let futureSalt = new FutureSalt
             futureSalt.validSince = TLDecode[uint32](stream)
             futureSalt.validUntil = TLDecode[uint32](stream)
