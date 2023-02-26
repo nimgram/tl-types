@@ -3,91 +3,38 @@
 # This file is part of Nimgram, under the MIT License
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import ../src/tltypes, ../src/tltypes/encode, ../src/tltypes/decode
+import ../src/tltypes
 import pkg/stint
-import std/options
 
-proc primitivesTest = 
-    block:
-        let i32 = high(int32)
-        let i32encoded = TLEncode(i32)
-        let i32decoded = TLDecode[int32](newTLStream(i32encoded))
-        doAssert i32decoded == i32, "int32 test is not matching"
+proc test =
+    #let t = newTLStream(@[17'u8, 248, 239, 167, 3, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0])
+    #echo tl(t)
+    var t = tl("updateMessagePollVote", {"poll_id": 3333'u64, "user_id": 3135'u64, options: @[@[135'u8, 13'u8], @[131'u8]], "qts": 104'u32})
+    doAssert t.encode() == [201'u8,149,99,16,5,13,0,0,0,0,0,0,63,12,0,0,0,0,0,0,21,196,181,28,2,0,0,0,2,135,13,0,1,131,0,0,104,0,0,0]
 
-    block:
-        let i64 = high(int64)
-        let i64encoded = TLEncode(i64)
-        let i64decoded = TLDecode[int64](newTLStream(i64encoded))
-        doAssert i64decoded == i64, "int64 test is not matching"
+    t = tl(newTLStream(@[13'u8,13,155,218,105,43,0,0,94,72,66,36,223,175,208,184,35,0,0,0]))
+    doAssert t.name == "invokeWithLayer"
+    doAssert t.getValue[:TLConstructor]("query").getValue[:TLConstructor]("ttl").getValue[:uint32]("days") == 35
+    t = tl("coreMessage", {msg_id=13'u64, seqno=2'u32, bytes=3'u32, body=getReturnType(t)})
+    t["body"] = toTL(false)
+
+    doAssert tl(newTLStream(t.encode())).getValue[:bool]("body") == false
     
-    block:
-        let f64 = high(float64)
-        let f64encoded = TLEncode(f64)
-        let f64decoded = TLDecode[float64](newTLStream(f64encoded))
-        doAssert f64decoded == f64, "float64 test is not matching"
-    
-    block:
-        let btest = true
-        let bencoded = TLEncode(btest)
-        let bdecoded = TLDecode[bool](newTLStream(bencoded))
-        doAssert btest == bdecoded and TLDecode[uint32](newTLStream(bencoded)) == uint32(0x997275b5), "bool test is not matching"
-    
-    block:
-        let stest = "nimgramm"
-        let sencoded = TLEncode(stest)
-        let sdecoded = TLDecode[string](newTLStream(sencoded))
-        doAssert sdecoded == stest, "string test is not matching"
+    t = tl(newTLStream(@[220'u8, 248, 241, 115, 1, 0, 0, 0, 96, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 25, 186, 114, 62]))
+    doAssert t.name == "msg_container"
+    doAssert t.getValue[:seq[TLConstructor]]("messages")[0].name == "coreMessage"
+    doAssert t.getValue[:seq[TLConstructor]]("messages")[0].getValue[:TLConstructor]("body").name == "logOut"
 
 
-        doAssert sencoded[0] == 8, "encoded string len is not matching"
-        doAssert char(sencoded[2]) == 'i', "encoded string char check is not matching"
-        doAssert sencoded[sencoded.high] == 0, "encoded string padding test failed"
-    
-    block:        
-        let stest = "nimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgramnimgram"
-        let sencoded = TLEncode(stest)
-        let sdecoded = TLDecode[string](newTLStream(sencoded))
+    t = tl(newTLStream(@[236'u8,90,201,131,4,53,20,54,1,0,0,0,1,19,0,0,1,20,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,127,251,255,255,255,255,255,255,255,255,255,255,255,255,255,255,127,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,127]))
+    doAssert t.name == "p_q_inner_data"
+    doAssert t.getValue[:UInt128]("nonce") == stuint(Int128.high, 128)
+    doAssert t.getValue[:UInt256]("new_nonce") == stuint(Int256.high, 256)
 
-        doAssert stest == sdecoded, "encoded long string is not matching"
-        
-        doAssert sencoded[0] == 254'u8, "encoded long string len is not matching"
-        doAssert sencoded[1] == 38'u8 and sencoded[2] == 1'u8, "encoded long string len is not matching"
-        doAssert sencoded[sencoded.high] == 0'u8, "encoded string char check is not matching"
-
-    block:
-        let sq = @["nimgram", "client"]
-        let sqencoded = TLEncodeVector(sq)
-        let sqdecoded = TLDecodeVector[string](newTLStream(sqencoded))
-        doAssert sqdecoded == sq, "seq test is not matching"
-
-
-proc constructorsTest = 
-    block: 
-        let tls = InvokeWithLayer(layer: 600, query: InputPeerSelf().setConstructorID).setConstructorID
-        let tlencoded = TLEncode(tls)
-        let tldecoded = tl.TLDecode(newTLStream(tlencoded))
-        doAssert tldecoded of InvokeWithLayer, "decoded tl is not of type InvokeWithLayer"
-        let tlb = tldecoded.InvokeWithLayer
-        doAssert tlb.layer == 600
-        doAssert tlb.query of InputPeerSelf, "query is not of type InputPeerSelf"
-        
-    block:
-        let tls = MessageMediaPhoto(ttl_seconds: some(104'u32)).setConstructorID
-        let tlencoded = TLEncode(tls)
-        let tldecoded = tl.TLDecode(newTLStream(tlencoded))
-        doAssert tldecoded of MessageMediaPhoto, "decoded tl is not of type MessageMediaPhoto"
-        let tlb = tldecoded.MessageMediaPhoto
-        doAssert tlb.ttl_seconds.isSome and tlb.ttl_seconds.get == 104, "flag check failed"
-        
 when isMainModule:
-    echo "Checking primitives"
-    primitivesTest()
-    echo "Checking constructors"
-    constructorsTest()
+    test()

@@ -11,9 +11,6 @@
 # SOFTWARE.
 
 const MTPROTO_ENDIAN* = littleEndian
-const VECTOR_CID* = uint32(0x1cb5c415)
-const TRUE_CID* = uint32(0x997275b5)
-const FALSE_CID* = uint32(0xbc799737)
 
 type TLStream* = ref object
     ## A stream of bytes
@@ -27,6 +24,10 @@ proc readBytes*(self: TLStream, n: uint): seq[uint8] =
     ## Read a specified length of bytes
     result = self.stream[0..n-1]
     self.stream = self.stream[n..self.stream.high]
+
+proc readBytesSafe*(self: TLStream, n: uint): seq[uint8] {.noSideEffect.} =
+    ## Read a specified length of bytes without touching the stored sequence
+    return self.stream[0..n-1]
 
 proc len*(self: TLStream): int =
     return self.stream.len

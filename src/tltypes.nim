@@ -10,5 +10,5 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import tltypes/private/tl
-export tl
+import tltypes/private/parser, tltypes/private/stream
+export parser, stream
