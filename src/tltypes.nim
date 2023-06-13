@@ -1,5 +1,5 @@
 # Nimgram
-# Copyright (C) 2020-2023 Daniele Cortesi <https://github.com/dadadani>
+# Copyright (C) 2020-2022 Daniele Cortesi <https://github.com/dadadani>
 # This file is part of Nimgram, under the MIT License
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -10,5 +10,5 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import tltypes/private/parser, tltypes/private/stream
-export parser, stream
+import tltypes/private/tl
+export tl

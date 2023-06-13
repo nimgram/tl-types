@@ -1,5 +1,5 @@
 # Nimgram
-# Copyright (C) 2020-2023 Daniele Cortesi <https://github.com/dadadani>
+# Copyright (C) 2020-2022 Daniele Cortesi <https://github.com/dadadani>
 # This file is part of Nimgram, under the MIT License
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -23,7 +23,7 @@ proc generateStylizedName*(name: string, namespaces: seq[string]): string =
 
 proc escapeName*(name: string): string =
     result = name
-    if result in ["type", "out", "static"]:
+    if result in @["type", "out", "static"]:
         result = "`" & result & "`"
 
 proc generateFixedType*(t: string): string =
@@ -32,14 +32,3 @@ proc generateFixedType*(t: string): string =
                             ("int", "uint32"), ("long",
             "uint64"), ("float", "float32"), ("double", "float64"), ("true",
                     "bool"), ("Bool", "bool"), ("future_salt", "FutureSaltI"))
-
-const LAYER_DEFINITION = "LAYER"
-
-proc findLayerVersion*(tldata: string): int =
-  ## Find the layer version from the TL schema
-  for line in split(tldata, "\n"):
-    if line.startsWith("//"):
-      let index = line.find(LAYER_DEFINITION)
-      if index != -1:
-        return parseInt(line[index+LAYER_DEFINITION.len..line.high].strip())
-  raise newException(FieldDefect, "Unable to find layer version")
