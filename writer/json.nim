@@ -44,9 +44,9 @@ proc generateJson*(file: File, constructors: seq[TLConstructor],
                     if typeConverted.type.genericArgument.get().name.toLower() == "vector":
                         vectorCode = "cast[seq[TL]]"
                 if typeConverted.flag.isSome() and typeConverted.type.name.toLower != "true":
-                    file.write(&"\n        result[\"{parameter.name}\"] = if obj.{constructorName}.{parameter.name}.isSome: {bareCode}{vectorCode}((obj.{constructorName}.{parameter.name}.get())) else: newJNull()")
+                    file.write(&"\n        result[\"{parameter.name}\"] = if obj.{constructorName}.{fixName(parameter.name)}.isSome: {bareCode}{vectorCode}((obj.{constructorName}.{fixName(parameter.name)}.get())) else: newJNull()")
                 else:
-                    file.write(&"\n        result[\"{parameter.name}\"] = {bareCode}{vectorCode}(obj.{constructorName}.{parameter.name})")
+                    file.write(&"\n        result[\"{parameter.name}\"] = {bareCode}{vectorCode}(obj.{constructorName}.{fixName(parameter.name)})")
     file.write("""
 
     of uint32(0x997275b5):

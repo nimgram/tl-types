@@ -77,9 +77,9 @@ proc generateDecode*(file: File, constructors: seq[TLConstructor],
                 echo "WARNING: Found unknown type, skipping."
                 continue
             if flagCode != "":
-                file.write(&"\n        {flagCode} result.{constructorName}.{parameter.name} = {decodeCode}")
+                file.write(&"\n        {flagCode} result.{constructorName}.{fixName(parameter.name)} = {decodeCode}")
             else:
-                file.write(&"\n        result.{constructorName}.{parameter.name} = {decodeCode}")
+                file.write(&"\n        result.{constructorName}.{fixName(parameter.name)} = {decodeCode}")
     file.write("""
     
     of uint32(0xbc799737): return TLFalse(constructorID: uint32(0xbc799737)) 

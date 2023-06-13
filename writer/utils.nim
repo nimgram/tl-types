@@ -12,6 +12,20 @@
 
 import strutils, sugar
 
+
+proc fixName*(name: string): string =
+    var caps = false
+    for ch in name:
+        if ch == '_':
+            caps = true
+            continue
+        if caps:
+            caps = false
+            result.add(toUpperAscii(ch))
+        else:
+            result.add(ch)
+            
+
 proc generateStylizedName*(name: string, namespaces: seq[string]): string =
     let namespaces = collect:
         var cnt = 0
@@ -19,10 +33,10 @@ proc generateStylizedName*(name: string, namespaces: seq[string]): string =
             if cnt > 1: toLowerAscii(namespace) else: capitalizeAscii(namespace)
     if name.toLower() == "bool":
         return name.toLower
-    return join(namespaces & capitalizeAscii(name))
+    return join(namespaces & capitalizeAscii(fixName(name)))
 
 proc escapeName*(name: string): string =
-    result = name
+    result = fixName(name)
     if result in @["type", "out", "static"]:
         result = "`" & result & "`"
 

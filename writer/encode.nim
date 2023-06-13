@@ -31,9 +31,9 @@ proc generateEncode*(file: File, constructors: seq[TLConstructor],
                 if parameter.parameterType.get().TLParameterTypeSpecified.flag.isSome():
                     let a = parameter.parameterType.get.TLParameterTypeSpecified.flag.get
                     if parameter.parameterType.get().TLParameterTypeSpecified.type.name.toLower != "true":
-                        file.write(&"\n        if objc.{parameter.name}.isSome(): objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
+                        file.write(&"\n        if objc.{fixName(parameter.name)}.isSome(): objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
                     else:
-                        file.write(&"\n        if objc.{parameter.name}: objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
+                        file.write(&"\n        if objc.{fixName(parameter.name)}: objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
 
         for parameter in constructor.parameters:
             if parameter.anytype: continue
@@ -42,7 +42,7 @@ proc generateEncode*(file: File, constructors: seq[TLConstructor],
             if parameter.parameterType.get() of TLParameterTypeSpecified:
                 let ptype = parameter.parameterType.get().TLParameterTypeSpecified
 
-                encodeType = &"objc.{parameter.name}"
+                encodeType = &"objc.{fixName(parameter.name)}"
                 if ptype.flag.isSome():
                     encodeCode = &"result.add(TLEncode({encodeType}.get()))"
                 else:
@@ -58,9 +58,9 @@ proc generateEncode*(file: File, constructors: seq[TLConstructor],
                         continue
                 if ptype.flag.isSome():
                     if ptype.type.name.toLower !=
-                            "true": encodeCode = &"if objc.{parameter.name}.isSome(): {encodeCode}" else: encodeCode = ""
+                            "true": encodeCode = &"if objc.{fixName(parameter.name)}.isSome(): {encodeCode}" else: encodeCode = ""
             elif parameter.parameterType.get() of TLParameterTypeFlag:
-                file.write(&"\n        result.add(TLEncode(objc.{parameter.name}))")
+                file.write(&"\n        result.add(TLEncode(objc.{fixName(parameter.name)}))")
             else:
                 echo "WARNING: Found unknown type, skipping."
                 continue
