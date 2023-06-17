@@ -27,45 +27,47 @@ proc generateEncode*(file: File, constructors: seq[TLConstructor],
         file.write(&"\n    of uint32({constructor.id}):{objcCode}\n        result.add(TLEncode(uint32({constructor.id})))")
 
         for parameter in constructor.parameters:
-            if parameter.parameterType.get() of TLParameterTypeSpecified:
-                if parameter.parameterType.get().TLParameterTypeSpecified.flag.isSome():
-                    let a = parameter.parameterType.get.TLParameterTypeSpecified.flag.get
-                    if parameter.parameterType.get().TLParameterTypeSpecified.type.name.toLower != "true":
-                        file.write(&"\n        if objc.{fixName(parameter.name)}.isSome(): objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
-                    else:
-                        file.write(&"\n        if objc.{fixName(parameter.name)}: objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
+            if parameter.parameterType.isSome:
+                if parameter.parameterType.get() of TLParameterTypeSpecified:
+                    if parameter.parameterType.get().TLParameterTypeSpecified.flag.isSome():
+                        let a = parameter.parameterType.get.TLParameterTypeSpecified.flag.get
+                        if parameter.parameterType.get().TLParameterTypeSpecified.type.name.toLower != "true":
+                            file.write(&"\n        if objc.{fixName(parameter.name)}.isSome(): objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
+                        else:
+                            file.write(&"\n        if objc.{fixName(parameter.name)}: objc.{a.parameterName} = objc.{a.parameterName} or FlagBit(1) shl FlagBit({a.index})")
 
         for parameter in constructor.parameters:
             if parameter.anytype: continue
             var encodeCode = ""
             var encodeType = ""
-            if parameter.parameterType.get() of TLParameterTypeSpecified:
-                let ptype = parameter.parameterType.get().TLParameterTypeSpecified
+            if parameter.parameterType.isSome:
+                if parameter.parameterType.get() of TLParameterTypeSpecified:
+                    let ptype = parameter.parameterType.get().TLParameterTypeSpecified
 
-                encodeType = &"objc.{fixName(parameter.name)}"
-                if ptype.flag.isSome():
-                    encodeCode = &"result.add(TLEncode({encodeType}.get()))"
-                else:
-                    encodeCode = &"result.add(TLEncode({encodeType}))"
-                if ptype.type.genericArgument.isSome() and encodeType != "":
-                    if ptype.type.genericArgument.get().name.toLower() == "vector":
-                        if ptype.flag.isSome():
-                            encodeCode = &"result.add(TLEncodeVector({encodeType}.get()))"
-                        else:
-                            encodeCode = &"result.add(TLEncodeVector({encodeType}))"
+                    encodeType = &"objc.{fixName(parameter.name)}"
+                    if ptype.flag.isSome():
+                        encodeCode = &"result.add(TLEncode({encodeType}.get()))"
                     else:
-                        echo "WARNING: Found a genericArgument that is not vector, skipping."
-                        continue
-                if ptype.flag.isSome():
-                    if ptype.type.name.toLower !=
-                            "true": encodeCode = &"if objc.{fixName(parameter.name)}.isSome(): {encodeCode}" else: encodeCode = ""
-            elif parameter.parameterType.get() of TLParameterTypeFlag:
-                file.write(&"\n        result.add(TLEncode(objc.{fixName(parameter.name)}))")
-            else:
-                echo "WARNING: Found unknown type, skipping."
-                continue
-            if encodeCode == "": continue
-            file.write(&"\n        {encodeCode}")
+                        encodeCode = &"result.add(TLEncode({encodeType}))"
+                    if ptype.type.genericArgument.isSome() and encodeType != "":
+                        if ptype.type.genericArgument.get().name.toLower() == "vector":
+                            if ptype.flag.isSome():
+                                encodeCode = &"result.add(TLEncodeVector({encodeType}.get()))"
+                            else:
+                                encodeCode = &"result.add(TLEncodeVector({encodeType}))"
+                        else:
+                            echo "WARNING: Found a genericArgument that is not vector, skipping."
+                            continue
+                    if ptype.flag.isSome():
+                        if ptype.type.name.toLower !=
+                                "true": encodeCode = &"if objc.{fixName(parameter.name)}.isSome(): {encodeCode}" else: encodeCode = ""
+                elif parameter.parameterType.get() of TLParameterTypeFlag:
+                    file.write(&"\n        result.add(TLEncode(objc.{fixName(parameter.name)}))")
+                else:
+                    echo "WARNING: Found unknown type, skipping."
+                    continue
+                if encodeCode == "": continue
+                file.write(&"\n        {encodeCode}")
 
 
     file.write("""

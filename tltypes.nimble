@@ -12,7 +12,7 @@ srcDir        = "src"
 requires "nim >= 1.6.0"
 requires "stint"
 requires "zippy >= 0.9.7"
-taskRequires "gen", "https://github.com/nimgram/tl-parser"
+taskRequires "gen", "https://github.com/nimgram/tl-parser#master"
 
 proc gen = 
     selfExec("r --hints:off builder.nim")
