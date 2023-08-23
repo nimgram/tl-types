@@ -19,7 +19,7 @@ proc generateDecode*(file: File, constructors: seq[TLConstructor],
     if log: stdout.styledWriteLine(fgCyan, styleBright, "      Info:",
       fgDefault,
       resetStyle, " Generating TLDecode")
-    file.write("\n\nproc TLDecode*(stream: TLStream): TL =")
+    file.write("\n\nproc TLDecode*(stream: sink TLStream): TL =")
     file.write("\n    case TLDecode[uint32](stream):")
 
     for constructor in constructors:
@@ -110,8 +110,7 @@ proc generateDecode*(file: File, constructors: seq[TLConstructor],
     of uint32(0x1cb5c415):
         let length = TLDecode[int32](stream)
         let buffer = stream.readAll()
-        var stream = newTLStream(buffer)
-        let elementsLength = len(buffer) / length
+        let elementsLength = len(stream) / length
         result = TLVector(constructorID: 0x1cb5c415)
         if elementsLength == 4:
             for _ in 0..<length:

@@ -19,7 +19,7 @@ type TLStream* = ref object
     ## A stream of bytes
     stream: seq[uint8] ## Sequence of bytes
 
-proc newTLStream*(data: seq[uint8]): TLStream =
+proc newTLStream*(data: sink seq[uint8]): TLStream =
     ## Create a new TLStream
     return TLStream(stream: data)
 
@@ -31,7 +31,7 @@ proc readBytes*(self: TLStream, n: uint): seq[uint8] =
 proc len*(self: TLStream): int =
     return self.stream.len
 
-proc readAll*(self: TLStream): seq[uint8] =
+proc readAll*(self: sink TLStream): seq[uint8] =
     ## Read everything remaining
     result = self.stream
     self.stream.setLen(0)
