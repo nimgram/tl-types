@@ -9,7 +9,7 @@ srcDir        = "src"
 
 # Dependencies
 
-requires "nim >= 1.6.0"
+requires "nim >= 2.0.0"
 requires "stint"
 requires "zippy >= 0.9.7"
 taskRequires "gen", "https://github.com/nimgram/tl-parser#master"
