@@ -65,7 +65,7 @@ type
 
 proc TLEncode*(obj: TL): seq[uint8]
 
-proc TLDecode*(stream: TLStream): TL
+proc TLDecode*(stream: sink TLStream): TL
 
 proc TLEncode*(self: CoreMessage): seq[uint8] =
     result.add(self.msgID.TLEncode())
